@@ -20,8 +20,8 @@ import {
 
 const demosSection = document.getElementById("demos");
 
-let faceDetector: FaceDetector;
-let runningMode: string = "IMAGE";
+let faceDetector;
+let runningMode= "IMAGE";
 
 // Initialize the object detector
 const initializefaceDetector = async () => {
@@ -152,7 +152,7 @@ function displayImageDetections(detections: [], resultElement: HTMLElement) {
 
 let video = document.getElementById("webcam");
 const liveView = document.getElementById("liveView");
-let enableWebcamButton: HTMLButtonElement;
+let enableWebcamButton;
 
 // Check if webcam access is supported.
 const hasGetUserMedia = () => !!navigator.mediaDevices?.getUserMedia;
