@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediaPipe Face Detection</title>
+  <!-- Load MediaPipe and dependencies -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh"></script>
+</head>
+<body>
+  <h1>MediaPipe Face Detection</h1>
+  <video id="inputVideo" width="640" height="480" autoplay></video>
+  <canvas id="outputCanvas" width="640" height="480"></canvas>
+
+  <script>
+    // Initialize MediaPipe FaceMesh
+    const faceMesh = new FaceMesh({locateFile: (file) => {
+      return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
+    }});
+    faceMesh.setOptions({
+      maxNumFaces: 1,
+      minDetectionConfidence: 0.5,
+      minTrackingConfidence: 0.5
+    });
+    faceMesh.onResults(onResults);
+
+    // Access webcam
+    const videoElement = document.getElementById('inputVideo');
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then((stream) => {
+        videoElement.srcObject = stream;
+      });
+
+    // Main function to process results
+    function onResults(results) {
+      const canvasElement = document.getElementById('outputCanvas');
+      const canvasCtx = canvasElement.getContext('2d');
+      canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+
+      // Draw face landmarks
+      if (results.multiFaceLandmarks) {
+        for (const landmarks of results.multiFaceLandmarks) {
+          for (const point of landmarks) {
+            const x = point.x * canvasElement.width;
+            const y = point.y * canvasElement.height;
+            canvasCtx.beginPath();
+            canvasCtx.arc(x, y, 2, 0, 2 * Math.PI);
+            canvasCtx.fillStyle = 'red';
+            canvasCtx.fill();
+          }
+        }
+      }
+    }
+
+    // Start face detection
+    faceMesh.initialize().then(() => {
+      faceMesh.start(videoElement);
+    });
+  </script>
+</body>
+</html>
