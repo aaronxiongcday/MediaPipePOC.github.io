@@ -1,62 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MediaPipe Face Detection</title>
-  <!-- Load MediaPipe and dependencies -->
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh"></script>
-</head>
-<body>
-  <h1>MediaPipe Face Detection</h1>
-  <video id="inputVideo" width="640" height="480" autoplay></video>
-  <canvas id="outputCanvas" width="640" height="480"></canvas>
+<!-- Copyright 2023 The MediaPipe Authors.
 
-  <script>
-    // Initialize MediaPipe FaceMesh
-    const faceMesh = new FaceMesh({locateFile: (file) => {
-      return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
-    }});
-    faceMesh.setOptions({
-      maxNumFaces: 1,
-      minDetectionConfidence: 0.5,
-      minTrackingConfidence: 0.5
-    });
-    faceMesh.onResults(onResults);
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-    // Access webcam
-    const videoElement = document.getElementById('inputVideo');
-    const canvasElement = document.getElementById('outputCanvas');
-    const canvasCtx = canvasElement.getContext('2d');
+     http://www.apache.org/licenses/LICENSE-2.0
 
-    navigator.mediaDevices.getUserMedia({ video: true })
-      .then((stream) => {
-        videoElement.srcObject = stream;
-      });
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. -->
 
-    // Main function to process results
-    function onResults(results) {
-      canvasCtx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+<link href="./styles.css" rel="stylesheet">
+<script src="./libs.js"></script>
 
-      // Draw face landmarks
-      if (results.multiFaceLandmarks) {
-        for (const landmarks of results.multiFaceLandmarks) {
-          for (const point of landmarks) {
-            const x = point.x * canvasElement.width;
-            const y = point.y * canvasElement.height;
-            canvasCtx.beginPath();
-            canvasCtx.arc(x, y, 2, 0, 2 * Math.PI);
-            canvasCtx.fillStyle = 'red';
-            canvasCtx.fill();
-          }
-        }
-      }
-    }
+<h1>Face detection using the MediaPipe Face Detector task</h1>
 
-    // Start face detection
-    faceMesh.initialize().then(() => {
-      faceMesh.start(videoElement);
-    });
-  </script>
-</body>
-</html>
+<section id="demos" class="invisible">
+  <h2>Demo: Detecting Faces</h2>
+  <!--
+  <p><b>Click on an image below</b> to detect faces in the image.</p>
+
+  
+  <div class="detectOnClick">
+    <img src="https://assets.codepen.io/9177687/female-4572747_640.jpg" width="100%" crossorigin="anonymous" title="Click to get classification!" />
+  </div>
+  <div class="detectOnClick">
+    <img src="https://assets.codepen.io/9177687/idea-gcbe74dc69_1920.jpg" width="100%" crossorigin="anonymous" title="Click to get classification!" />
+  </div>
+  -->
+
+  <h2>Demo: Webcam continuous face detection</h2>
+  <p>Detect faces from your webcam. When ready click "enable webcam" below and accept access to the webcam.</p>
+  <div id="liveView" class="videoView">
+    <button id="webcamButton" class="mdc-button mdc-button--raised">
+      <span class="mdc-button__ripple"></span>
+      <span class="mdc-button__label">ENABLE WEBCAM</span>
+    </button>
+    <video id="webcam" autoplay playsinline></video>
+  </div>
+</section>
