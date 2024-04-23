@@ -90,7 +90,7 @@ async function handleClick(event) {
   displayImageDetections(detections, event.target);
 }
 
-function displayImageDetections(detections: [], resultElement: HTMLElement) {
+function displayImageDetections(detections, resultElement) {
   const ratio = resultElement.height / resultElement.naturalHeight;
   console.log(ratio);
 
@@ -218,7 +218,7 @@ async function predictWebcam() {
   window.requestAnimationFrame(predictWebcam);
 }
 
-function displayVideoDetections(detections: Detection[]) {
+function displayVideoDetections(detections) {
   // Remove any highlighting from previous frame.
 
   for (let child of children) {
