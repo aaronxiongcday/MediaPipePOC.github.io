@@ -26,6 +26,9 @@
 
     // Access webcam
     const videoElement = document.getElementById('inputVideo');
+    const canvasElement = document.getElementById('outputCanvas');
+    const canvasCtx = canvasElement.getContext('2d');
+
     navigator.mediaDevices.getUserMedia({ video: true })
       .then((stream) => {
         videoElement.srcObject = stream;
@@ -33,9 +36,7 @@
 
     // Main function to process results
     function onResults(results) {
-      const canvasElement = document.getElementById('outputCanvas');
-      const canvasCtx = canvasElement.getContext('2d');
-      canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+      canvasCtx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
 
       // Draw face landmarks
       if (results.multiFaceLandmarks) {
