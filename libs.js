@@ -46,7 +46,7 @@ initializefaceDetector();
 
 let video = document.getElementById("webcam");
 const liveView = document.getElementById("liveView");
-let enableWebcamButton: HTMLButtonElement;
+let enableWebcamButton;
 const instruction = document.getElementById("errorMessage");
 
 // Check if webcam access is supported.
