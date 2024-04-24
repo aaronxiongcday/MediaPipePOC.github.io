@@ -20,8 +20,8 @@ import {
 
 const demosSection = document.getElementById("demos");
 
-let faceDetector;
-let runningMode= "IMAGE";
+let faceDetector: FaceDetector;
+let runningMode: string = "IMAGE";
 
 // Initialize the object detector
 const initializefaceDetector = async () => {
@@ -90,7 +90,7 @@ async function handleClick(event) {
   displayImageDetections(detections, event.target);
 }
 
-function displayImageDetections(detections, resultElement) {
+function displayImageDetections(detections: [], resultElement: HTMLElement) {
   const ratio = resultElement.height / resultElement.naturalHeight;
   console.log(ratio);
 
@@ -152,7 +152,8 @@ function displayImageDetections(detections, resultElement) {
 
 let video = document.getElementById("webcam");
 const liveView = document.getElementById("liveView");
-let enableWebcamButton;
+let enableWebcamButton: HTMLButtonElement;
+const instruction = document.getElementById("errorMessage");
 
 // Check if webcam access is supported.
 const hasGetUserMedia = () => !!navigator.mediaDevices?.getUserMedia;
@@ -189,6 +190,10 @@ async function enableCam(event) {
   navigator.mediaDevices
     .getUserMedia(constraints)
     .then(function (stream) {
+    const track = stream.getVideoTracks()[0];
+    const settings = track.getSettings();
+    //console.log("Camera specifications:", JSON.stringify(settings));
+    console.log("Camera specifications:", settings);
       video.srcObject = stream;
       video.addEventListener("loadeddata", predictWebcam);
     })
@@ -218,9 +223,17 @@ async function predictWebcam() {
   window.requestAnimationFrame(predictWebcam);
 }
 
-function displayVideoDetections(detections) {
+function displayVideoDetections(detections: Detection[]) {
+  
+  //console.log("Face Detections:", detections);
+  
+  instruction.classList.remove("displayed");
+  if(detections.length > 1){
+    instruction.innerText = "Multiple people are detected.";
+    instruction.classList.add("displayed");
+  }
+  
   // Remove any highlighting from previous frame.
-
   for (let child of children) {
     liveView.removeChild(child);
   }
@@ -228,9 +241,32 @@ function displayVideoDetections(detections) {
 
   // Iterate through predictions and draw them to the live view
   for (let detection of detections) {
+    /*const leftEye = detection.keypoints[0];
+    const rightEye = detection.keypoints[1];
+
+    const distance = Math.sqrt(
+      Math.pow(rightEye.x - leftEye.x, 2) + Math.pow(rightEye.y - leftEye.y, 2)
+    );
+
+    console.log("Distance between eyes:", distance);
+    */
+    /*let score = Math.round(parseFloat(detection.categories[0].score) * 100);
+    if(score < 70){
+      instruction.innerText = "Multiple people are detected.";
+      instruction.classList.add("displayed");
+    }
+    else if(detection.boundingBox.width < 130){
+      
+    }
+    */
+    if(detection.boundingBox.width < 130){//height and width
+      instruction.innerText = "You are standing too far away. Please step forward. BoundingBox height/width: " + detection.boundingBox.width;
+      instruction.classList.add("displayed");
+    }
+    
     const p = document.createElement("p");
     p.innerText =
-      "Confidence: " +
+      "Quality: " +
       Math.round(parseFloat(detection.categories[0].score) * 100) +
       "% .";
     p.style =
@@ -270,7 +306,7 @@ function displayVideoDetections(detections) {
     // Store drawn objects in memory so they are queued to delete at next call
     children.push(highlighter);
     children.push(p);
-    for (let keypoint of detection.keypoints) {
+    for (let keypoint of detection.keypoints.slice(0, 2)) {
       const keypointEl = document.createElement("spam");
       keypointEl.className = "key-point";
       keypointEl.style.top = `${keypoint.y * video.offsetHeight - 3}px`;
