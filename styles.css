@@ -119,5 +119,13 @@ section {
   display: block;
   color: red;
   font-weight: bold;
-  margin-top: 10px;
+  margin-top: 30px;
+}
+
+.capturedImage{
+  margin-top: 30px;
+}
+
+.captureButtonContainer{
+  margin-top: 30px;
 }

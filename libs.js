@@ -47,6 +47,8 @@ let video = document.getElementById("webcam");
 const liveView = document.getElementById("liveView");
 let enableWebcamButton;
 const instruction = document.getElementById("errorMessage");
+let captureButton;
+const capturedImage = document.getElementById('captured-image');
 
 // Check if webcam access is supported.
 const hasGetUserMedia = () => !!navigator.mediaDevices?.getUserMedia;
@@ -60,8 +62,28 @@ var children = [];
 if (hasGetUserMedia()) {
   enableWebcamButton = document.getElementById("webcamButton");
   enableWebcamButton.addEventListener("click", enableCam);
+  captureButton = document.getElementById("captureButton");
+  captureButton.addEventListener("click", captureImage);
 } else {
   console.warn("getUserMedia() is not supported by your browser");
+}
+
+
+function captureImage(){
+	// Create a canvas element to capture the image
+	const canvas = document.createElement('canvas');
+	canvas.width = video.videoWidth;
+	canvas.height = video.videoHeight;
+	const ctx = canvas.getContext('2d');
+
+	// Draw the current frame from the video onto the canvas
+	ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+	// Convert the canvas content to a data URL (base64)
+	const dataURL = canvas.toDataURL('image/png');
+
+	// Display the captured image in the image element
+	capturedImage.src = dataURL;
 }
 
 // Enable the live webcam view and start detection.
@@ -119,11 +141,12 @@ async function predictWebcam() {
 function displayVideoDetections(detections) {
   
   //console.log("Face Detections:", detections);
-  
+  captureButton.disabled = false;
   instruction.classList.remove("displayed");
   if(detections.length > 1){
     instruction.innerText = "Multiple people are detected.";
     instruction.classList.add("displayed");
+    captureButton.disabled = true;
   }
   
   // Remove any highlighting from previous frame.
@@ -143,18 +166,17 @@ function displayVideoDetections(detections) {
 
     console.log("Distance between eyes:", distance);
     */
-    /*let score = Math.round(parseFloat(detection.categories[0].score) * 100);
+    
+    let score = Math.round(parseFloat(detection.categories[0].score) * 100);
     if(score < 70){
-      instruction.innerText = "Multiple people are detected.";
+      instruction.innerText = "Face detection score is less than 70";
       instruction.classList.add("displayed");
+      captureButton.disabled = true;
     }
-    else if(detection.boundingBox.width < 130){
-      
-    }
-    */
-    if(detection.boundingBox.width < 130){//height and width
+    else if(detection.boundingBox.width < 130){//height and width
       instruction.innerText = "You are standing too far away. Please step forward. BoundingBox height/width: " + detection.boundingBox.width;
       instruction.classList.add("displayed");
+      captureButton.disabled = true;
     }
     
     const p = document.createElement("p");

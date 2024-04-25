@@ -41,7 +41,14 @@ limitations under the License. -->
 		  <span class="mdc-button__label">ENABLE WEBCAM</span>
 		</button>
 		<video id="webcam" autoplay playsinline></video>
-		<span class="instruction" id="errorMessage"></p>
+		<span class="instruction" id="errorMessage"></span>
+		<div class="captureButtonContainer">
+		  <button id="captureButton" class="mdc-button mdc-button--raised">
+			<span class="mdc-button__ripple"></span>
+			<span class="mdc-button__label">Capture</span>
+		  </button>
+		</div>
+		<div><img id="captured-image" class="capturedImage" src="" alt="Captured Image"></div>
 	  </div>
 	</section>
 </body>
