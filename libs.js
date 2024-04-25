@@ -124,23 +124,27 @@ async function enableCam(event) {
 
 let lastVideoTime = -1;
 async function predictWebcam() {
-  // if image mode is initialized, create a new classifier with video runningMode
-  if (runningMode === "IMAGE") {
-    runningMode = "VIDEO";
-    await faceDetector.setOptions({ runningMode: "VIDEO" });
-  }
-  let startTimeMs = performance.now();
+  try {
+	  // if image mode is initialized, create a new classifier with video runningMode
+	  if (runningMode === "IMAGE") {
+		runningMode = "VIDEO";
+		await faceDetector.setOptions({ runningMode: "VIDEO" });
+	  }
+	  let startTimeMs = performance.now();
 
-  // Detect faces using detectForVideo
-  if (video.currentTime !== lastVideoTime) {
-    lastVideoTime = video.currentTime;
-    const detections = faceDetector.detectForVideo(video, startTimeMs)
-      .detections;
-    displayVideoDetections(detections);
-  }
+	  // Detect faces using detectForVideo
+	  if (video.currentTime !== lastVideoTime) {
+		lastVideoTime = video.currentTime;
+		const detections = faceDetector.detectForVideo(video, startTimeMs)
+		  .detections;
+		displayVideoDetections(detections);
+	  }
 
-  // Call this function again to keep predicting when the browser is ready
-  window.requestAnimationFrame(predictWebcam);
+	  // Call this function again to keep predicting when the browser is ready
+	  window.requestAnimationFrame(predictWebcam);
+  } catch (error) {
+    console.error("Error predicting webcam:", error);
+  }
 }
 
 function displayVideoDetections(detections) {
