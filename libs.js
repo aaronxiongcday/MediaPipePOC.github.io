@@ -24,17 +24,21 @@ let runningMode = "IMAGE";
 
 // Initialize the object detector
 const initializefaceDetector = async () => {
-  const vision = await FilesetResolver.forVisionTasks(
-    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm"
-  );
-  faceDetector = await FaceDetector.createFromOptions(vision, {
-    baseOptions: {
-      modelAssetPath: `https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/1/blaze_face_short_range.tflite`,
-      delegate: "GPU"
-    },
-    runningMode: runningMode
-  });
-  demosSection.classList.remove("invisible");
+  try {
+    const vision = await FilesetResolver.forVisionTasks(
+      "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm"
+    );
+    faceDetector = await FaceDetector.createFromOptions(vision, {
+      baseOptions: {
+        modelAssetPath: `https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/1/blaze_face_short_range.tflite`,
+        delegate: "CPU"
+      },
+      runningMode: runningMode
+    });
+    demosSection.classList.remove("invisible");
+  } catch (error) {
+    console.error("Error initializing face detector:", error);
+  }
 };
 initializefaceDetector();
 
