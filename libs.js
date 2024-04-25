@@ -20,7 +20,7 @@ import {
 const demosSection = document.getElementById("demos");
 
 let faceDetector;
-let runningMode = "IMAGE";
+let runningMode = "VIDEO";
 
 // Initialize the object detector
 const initializefaceDetector = async () => {
